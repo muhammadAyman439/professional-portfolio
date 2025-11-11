@@ -294,6 +294,77 @@ export default function CMS() {
                       className="w-full px-4 py-2 bg-background border border-foreground/20 rounded-lg"
                     />
                   </div>
+
+                  {/* Profile Image */}
+                  <div>
+                    <ImageUpload
+                      currentImage={editingProfile.profileImage || ""}
+                      onImageChange={(url) => setEditingProfile({ ...editingProfile, profileImage: url })}
+                      onImageRemove={() => setEditingProfile({ ...editingProfile, profileImage: "" })}
+                      token={token}
+                      label="Profile Image"
+                    />
+                  </div>
+
+                  {/* Stats Section */}
+                  <div className="pt-6 border-t border-foreground/10">
+                    <h3 className="text-lg font-semibold mb-4">Authority Metrics & Numbers</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold mb-2">Years of experience</label>
+                        <input
+                          type="text"
+                          value={editingProfile.stats.yearsOfExperience}
+                          onChange={(e) => setEditingProfile({ 
+                            ...editingProfile, 
+                            stats: { ...editingProfile.stats, yearsOfExperience: e.target.value }
+                          })}
+                          placeholder="+6"
+                          className="w-full px-4 py-2 bg-background border border-foreground/20 rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold mb-2">Total Funding Secured</label>
+                        <input
+                          type="text"
+                          value={editingProfile.stats.totalFundingSecured}
+                          onChange={(e) => setEditingProfile({ 
+                            ...editingProfile, 
+                            stats: { ...editingProfile.stats, totalFundingSecured: e.target.value }
+                          })}
+                          placeholder="$M12+"
+                          className="w-full px-4 py-2 bg-background border border-foreground/20 rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold mb-2">Countries</label>
+                        <input
+                          type="text"
+                          value={editingProfile.stats.countries}
+                          onChange={(e) => setEditingProfile({ 
+                            ...editingProfile, 
+                            stats: { ...editingProfile.stats, countries: e.target.value }
+                          })}
+                          placeholder="5+"
+                          className="w-full px-4 py-2 bg-background border border-foreground/20 rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold mb-2">Winning Rate</label>
+                        <input
+                          type="text"
+                          value={editingProfile.stats.winningRate}
+                          onChange={(e) => setEditingProfile({ 
+                            ...editingProfile, 
+                            stats: { ...editingProfile.stats, winningRate: e.target.value }
+                          })}
+                          placeholder="75%"
+                          className="w-full px-4 py-2 bg-background border border-foreground/20 rounded-lg"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-semibold mb-2">Mission</label>
                     <textarea
@@ -315,18 +386,47 @@ export default function CMS() {
                   </Button>
                 </div>
                 {profile && (
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-sm text-foreground/60">Name</p>
-                      <p className="text-lg font-semibold">{profile.name}</p>
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-foreground/60">Name</p>
+                        <p className="text-lg font-semibold">{profile.name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-foreground/60">Title</p>
+                        <p className="text-lg">{profile.title}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-foreground/60">Email</p>
+                        <p className="text-lg">{profile.email}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-foreground/60">Phone</p>
+                        <p className="text-lg">{profile.phone}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-foreground/60">Title</p>
-                      <p className="text-lg">{profile.title}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-foreground/60">Email</p>
-                      <p className="text-lg">{profile.email}</p>
+                    
+                    {/* Stats Display */}
+                    <div className="pt-4 border-t border-foreground/10">
+                      <p className="text-sm font-semibold text-foreground/60 mb-4">Authority Metrics & Numbers</p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div className="text-center p-4 bg-foreground/5 rounded-lg">
+                          <p className="text-2xl font-bold text-primary mb-1">{profile.stats.yearsOfExperience}</p>
+                          <p className="text-xs text-foreground/60">Years of experience</p>
+                        </div>
+                        <div className="text-center p-4 bg-foreground/5 rounded-lg">
+                          <p className="text-2xl font-bold text-primary mb-1">{profile.stats.totalFundingSecured}</p>
+                          <p className="text-xs text-foreground/60">Total Funding Secured</p>
+                        </div>
+                        <div className="text-center p-4 bg-foreground/5 rounded-lg">
+                          <p className="text-2xl font-bold text-primary mb-1">{profile.stats.countries}</p>
+                          <p className="text-xs text-foreground/60">Countries</p>
+                        </div>
+                        <div className="text-center p-4 bg-foreground/5 rounded-lg">
+                          <p className="text-2xl font-bold text-primary mb-1">{profile.stats.winningRate}</p>
+                          <p className="text-xs text-foreground/60">Winning Rate</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}

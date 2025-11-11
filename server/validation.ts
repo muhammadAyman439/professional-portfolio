@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 export const statsSchema = z.object({
-  years: z.string(),
-  proposals: z.string(),
-  clients: z.string(),
-  successRate: z.string(),
+  yearsOfExperience: z.string(),
+  totalFundingSecured: z.string(),
+  countries: z.string(),
+  winningRate: z.string(),
 });
 
 export const bioSchema = z.object({
@@ -20,6 +20,7 @@ export const profileSchema = z
     email: z.string().email(),
     phone: z.string(),
     location: z.string(),
+    profileImage: z.string().url().optional(),
     linkedin: z.string().url().optional(),
     twitter: z.string().url().optional(),
     stats: statsSchema,

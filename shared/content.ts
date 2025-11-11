@@ -5,13 +5,14 @@ export interface Profile {
   email: string;
   phone: string;
   location: string;
+  profileImage?: string;
   linkedin?: string;
   twitter?: string;
   stats: {
-    years: string;
-    proposals: string;
-    clients: string;
-    successRate: string;
+    yearsOfExperience: string;
+    totalFundingSecured: string;
+    countries: string;
+    winningRate: string;
   };
   bio: {
     short: string;

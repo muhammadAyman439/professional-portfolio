@@ -63,7 +63,7 @@ export default function About() {
             <div className="relative animate-slideInLeft">
               <div className="aspect-square rounded-lg overflow-hidden border border-foreground/10">
                 <HoverImage
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=600&fit=crop"
+                  src={profile.profileImage || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=600&fit=crop"}
                   alt={profile.name}
                   className="w-full h-full object-cover"
                 />
@@ -102,7 +102,7 @@ export default function About() {
                 {profile.mission}
               </p>
               <p className="text-foreground/60">
-                I believe that proposal excellence is a strategic business function, not just a compliance exercise. By elevating how organizations approach proposals, we unlock competitive advantage and build stronger client relationships.
+              I aim to elevate the quality of proposal development across the sector transforming fragmented inputs into cohesive, fundable solutions that drive employment, digital transformation, and inclusive growth.
               </p>
             </div>
 
@@ -182,10 +182,11 @@ export default function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-xl font-semibold mb-2">Understand the Opportunity</h3>
-                <p className="text-foreground/70">
-                  Deep analysis of the client's needs, competitive landscape, and strategic priorities. This foundation informs everything that follows.
+                <h3 className="text-xl font-semibold mb-2">Deep Understanding Before Action</h3>
+                <p className="text-foreground/70 mb-2">
+                  Every engagement begins with clarity. I start by mapping the mandate, donor expectations, relevant policies, and the competitive landscape.
                 </p>
+                <p className="text-sm text-primary font-medium">Focus: Needs analysis, RFP deconstruction, stakeholder alignment.</p>
               </div>
             </div>
 
@@ -196,10 +197,11 @@ export default function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-xl font-semibold mb-2">Develop Strategy</h3>
-                <p className="text-foreground/70">
-                  Craft a compelling positioning that differentiates your organization and addresses the client's key evaluation criteria.
+                <h3 className="text-xl font-semibold mb-2">Strategy-Led Proposal Architecture</h3>
+                <p className="text-foreground/70 mb-2">
+                  Winning proposals require more than good writing—they need a strong core. I build a strategic framework that defines the solution, the differentiators, the impact pathways, and the technical scoring logic.
                 </p>
+                <p className="text-sm text-primary font-medium">Focus: Value proposition, solution logic, theory of change, scoring strategy.</p>
               </div>
             </div>
 
@@ -210,10 +212,11 @@ export default function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-xl font-semibold mb-2">Execute with Excellence</h3>
-                <p className="text-foreground/70">
-                  Rigorous execution with attention to compliance, clarity, and consistency. Every section reinforces your core message.
+                <h3 className="text-xl font-semibold mb-2">Collaborative, High-Performance Delivery</h3>
+                <p className="text-foreground/70 mb-2">
+                  I work as an extension of the internal team, creating a structured environment where technical experts, managers, and partners contribute effectively.
                 </p>
+                <p className="text-sm text-primary font-medium">Focus: Team coordination, input management, structured workflows.</p>
               </div>
             </div>
 
@@ -224,10 +227,41 @@ export default function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-xl font-semibold mb-2">Deliver & Learn</h3>
-                <p className="text-foreground/70">
-                  Submit with confidence and capture lessons learned. Every proposal is an opportunity to improve and refine your process.
+                <h3 className="text-xl font-semibold mb-2">Precision, Compliance & Quality Assurance</h3>
+                <p className="text-foreground/70 mb-2">
+                  Compliance is the foundation of competitiveness. I apply quality checks across all components—technical, financial, operational, and annexes—to ensure the submission meets every requirement and maximizes evaluation scores.
                 </p>
+                <p className="text-sm text-primary font-medium">Focus: Checklists, compliance matrices, revision cycles, formatting standards.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-6 animate-fadeInUp" style={{ animationDelay: "400ms" }}>
+              <div className="flex-shrink-0">
+                <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-primary/10">
+                  <span className="text-primary font-bold text-lg">5</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Impact-Centered Design</h3>
+                <p className="text-foreground/70 mb-2">
+                  Strong proposals do more than answer questions—they demonstrate long-term value. I design programs with clear KPIs, sustainability mechanisms, risk strategies, and measurable outcomes, ensuring proposals are not only fundable but implementable at scale.
+                </p>
+                <p className="text-sm text-primary font-medium">Focus: KPIs, M&E logic, sustainability models, risk mitigation.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-6 animate-fadeInUp" style={{ animationDelay: "500ms" }}>
+              <div className="flex-shrink-0">
+                <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-primary/10">
+                  <span className="text-primary font-bold text-lg">6</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Delivery That Builds Internal Capacity</h3>
+                <p className="text-foreground/70 mb-2">
+                  My approach strengthens organizations beyond a single submission. I transfer processes, templates, and systems that help teams operate more efficiently and independently in future bids.
+                </p>
+                <p className="text-sm text-primary font-medium">Focus: Templates, playbooks, knowledge transfer, continuous improvement.</p>
               </div>
             </div>
           </div>

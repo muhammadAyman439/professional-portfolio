@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { ArrowRight, Award, Users, TrendingUp } from "lucide-react";
+import { ArrowRight, Target, Lightbulb, Network } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
 import { buildPageSEO } from "@/lib/seo";
 import { Spinner } from "@/components/ui/spinner";
@@ -70,27 +70,27 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 py-8 border-t border-b border-foreground/10">
               <div>
                 <div className="text-3xl md:text-4xl font-display font-bold text-primary">
-                  {isProfileLoading ? <Spinner className="size-6" /> : profile.stats.years}
+                  {isProfileLoading ? <Spinner className="size-6" /> : profile.stats.yearsOfExperience}
                 </div>
-                <p className="text-sm text-foreground/60 mt-2">Years Experience</p>
+                <p className="text-sm text-foreground/60 mt-2">Years of experience</p>
               </div>
               <div>
                 <div className="text-3xl md:text-4xl font-display font-bold text-primary">
-                  {isProfileLoading ? <Spinner className="size-6" /> : profile.stats.proposals}
+                  {isProfileLoading ? <Spinner className="size-6" /> : profile.stats.totalFundingSecured}
                 </div>
-                <p className="text-sm text-foreground/60 mt-2">Winning Proposals</p>
+                <p className="text-sm text-foreground/60 mt-2">Total Funding Secured</p>
               </div>
               <div>
                 <div className="text-3xl md:text-4xl font-display font-bold text-primary">
-                  {isProfileLoading ? <Spinner className="size-6" /> : profile.stats.clients}
+                  {isProfileLoading ? <Spinner className="size-6" /> : profile.stats.countries}
                 </div>
-                <p className="text-sm text-foreground/60 mt-2">Clients Served</p>
+                <p className="text-sm text-foreground/60 mt-2">Countries</p>
               </div>
               <div>
                 <div className="text-3xl md:text-4xl font-display font-bold text-primary">
-                  {isProfileLoading ? <Spinner className="size-6" /> : profile.stats.successRate}
+                  {isProfileLoading ? <Spinner className="size-6" /> : profile.stats.winningRate}
                 </div>
-                <p className="text-sm text-foreground/60 mt-2">Success Rate</p>
+                <p className="text-sm text-foreground/60 mt-2">Winning Rate</p>
               </div>
             </div>
 
@@ -216,31 +216,49 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="animate-fadeInUp">
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                <Award className="text-primary" size={24} />
+                <Target className="text-primary" size={24} />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Proposal Strategy</h3>
-              <p className="text-foreground/70">
-                End-to-end proposal strategy from opportunity assessment through contract award, with focus on differentiation and competitive positioning.
+              <h3 className="text-xl font-semibold mb-3">Proposal Strategy & Competitive Bidding Leadership</h3>
+              <p className="text-foreground/70 mb-4">
+                Designing and leading end-to-end proposal development strategies for large-scale, mission-driven organizations across the MEA region.
+              </p>
+              <p className="text-foreground/70 mb-4">
+                Bringing a structured, compliance-driven approach that elevates technical scores, differentiates value propositions, and maximizes winning potential in highly competitive procurement environments.
+              </p>
+              <p className="text-sm text-primary font-medium">
+                Focus: RFP analysis, solution positioning, bid management, scoring optimization.
               </p>
             </div>
 
             <div className="animate-fadeInUp" style={{ animationDelay: "100ms" }}>
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                <Users className="text-primary" size={24} />
+                <Lightbulb className="text-primary" size={24} />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Team Leadership</h3>
-              <p className="text-foreground/70">
-                Building and leading high-performing proposal teams, establishing proposal processes, and developing proposal talent.
+              <h3 className="text-xl font-semibold mb-3">Development & Public Sector Program Design</h3>
+              <p className="text-foreground/70 mb-4">
+                Translating national and organizational priorities into implementable, outcomes-based project frameworks.
+              </p>
+              <p className="text-foreground/70 mb-4">
+                Expert in shaping programs in youth employability, digital transformation, and economic inclusion — aligned with donor expectations and government strategies to secure sustained impact and funding approvals.
+              </p>
+              <p className="text-sm text-primary font-medium">
+                Focus: Theory of change, KPIs, logical frameworks, sustainability & scalability planning.
               </p>
             </div>
 
             <div className="animate-fadeInUp" style={{ animationDelay: "200ms" }}>
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                <TrendingUp className="text-primary" size={24} />
+                <Network className="text-primary" size={24} />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Compliance Excellence</h3>
-              <p className="text-foreground/70">
-                Rigorous compliance management, requirement analysis, and quality assurance to ensure proposal completeness and accuracy.
+              <h3 className="text-xl font-semibold mb-3">Multi-Stakeholder Coordination & High-Performance Delivery</h3>
+              <p className="text-foreground/70 mb-4">
+                Driving collaboration among global institutions, government entities, private providers, and technical experts to produce cohesive, compliant, and persuasive submissions.
+              </p>
+              <p className="text-foreground/70 mb-4">
+                Ensuring seamless collaboration, clear accountability, and precision in every deliverable — from narrative to budget and annexes.
+              </p>
+              <p className="text-sm text-primary font-medium">
+                Focus: Consortium alignment, process optimization, quality assurance, compliance control.
               </p>
             </div>
           </div>
@@ -316,10 +334,10 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent"></div>
         <div className="container relative z-10 max-w-3xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
-            Ready to Elevate Your Proposal Excellence?
+          Let’s Turn Your Next Bid into a Win.
           </h2>
           <p className="text-lg text-foreground/70 mb-8">
-            Whether you're looking to improve your proposal process, build a winning team, or develop proposal strategy, I'm here to help.
+          From strategy to submission, I partner with teams to deliver proposals that score higher and secure funding.
           </p>
           <Link href="/contact">
             <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-base font-semibold group">

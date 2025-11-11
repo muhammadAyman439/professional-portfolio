@@ -11,21 +11,22 @@ datasource db {
 }
 
 model Profile {
-  id         String   @id @default("profile")
-  name       String
-  title      String
-  tagline    String
-  email      String
-  phone      String
-  location   String
-  linkedin   String?
-  twitter    String?
+  id           String   @id @default("profile")
+  name         String
+  title        String
+  tagline      String
+  email        String
+  phone        String
+  location     String
+  profileImage String?
+  linkedin     String?
+  twitter      String?
   
   // Stats
-  statsYears       String
-  statsProposals   String
-  statsClients     String
-  statsSuccessRate String
+  statsYearsOfExperience    String
+  statsTotalFundingSecured  String
+  statsCountries            String
+  statsWinningRate          String
   
   // Bio
   bioShort String @db.Text
