@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Portfolio from "./pages/Portfolio";
 import Insights from "./pages/Insights";
+import Article from "./pages/Article";
 import Contact from "./pages/Contact";
 import CMS from "./pages/CMS";
 
@@ -20,6 +21,7 @@ function Router() {
       <Route path={"/about"} component={About} />
       <Route path={"/portfolio"} component={Portfolio} />
       <Route path={"/insights"} component={Insights} />
+      <Route path={"/insights/:id"} component={Article} />
       <Route path={"/contact"} component={Contact} />
       <Route path={"/cms"} component={CMS} />
       <Route path={"/404"} component={NotFound} />

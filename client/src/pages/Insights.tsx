@@ -145,10 +145,12 @@ export default function Insights() {
                 </p>
 
                 {/* Read More Link */}
-                <button className="inline-flex items-center gap-2 text-primary hover:gap-3 transition-all font-semibold group">
-                  Read Full Article
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                </button>
+                <Link href={`/insights/${article.id}`}>
+                  <button className="inline-flex items-center gap-2 text-primary hover:gap-3 transition-all font-semibold group">
+                    Read Full Article
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </Link>
               </article>
               ))}
             </div>
