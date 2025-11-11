@@ -18,10 +18,12 @@ export default function Portfolio() {
   const sectors = ["all", ...(caseStudies ? Array.from(new Set(caseStudies.map((cs) => cs.sector))) : [])];
   const pageMetadata = buildPageSEO(profile).portfolio;
 
+  const sortedCaseStudies = (caseStudies ?? []).sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+  
   const filteredCaseStudies =
     selectedSector === "all"
-      ? caseStudies ?? []
-      : (caseStudies ?? []).filter((cs) => cs.sector === selectedSector);
+      ? sortedCaseStudies
+      : sortedCaseStudies.filter((cs) => cs.sector === selectedSector);
 
   return (
     <div className="w-full">

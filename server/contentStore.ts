@@ -110,6 +110,42 @@ export async function updateProfile(profile: Profile): Promise<Profile> {
   return transformProfile(updated);
 }
 
+export async function updateAdminToken(token: string): Promise<void> {
+  await prisma.profile.upsert({
+    where: { id: "profile" },
+    update: { adminToken: token },
+    create: {
+      id: "profile",
+      adminToken: token,
+      // Required fields with defaults (will be updated when profile is created)
+      name: "Admin",
+      title: "Admin",
+      tagline: "Admin",
+      email: "admin@example.com",
+      phone: "",
+      location: "",
+      statsYearsOfExperience: "0",
+      statsTotalFundingSecured: "0",
+      statsCountries: "0",
+      statsWinningRate: "0",
+      bioShort: "",
+      bioFull: "",
+      mission: "",
+      philosophy: [],
+      sectors: [],
+      regions: [],
+    },
+  });
+}
+
+export async function getAdminToken(): Promise<string | null> {
+  const profile = await prisma.profile.findUnique({
+    where: { id: "profile" },
+    select: { adminToken: true },
+  });
+  return profile?.adminToken ?? null;
+}
+
 export async function getCaseStudies(): Promise<CaseStudy[]> {
   return prisma.caseStudy.findMany({
     orderBy: [
@@ -132,6 +168,7 @@ export async function createCaseStudy(
     keyAchievements: payload.keyAchievements,
     image: payload.image,
     featured: payload.featured,
+    order: payload.order,
   };
 
   if (payload.id) {

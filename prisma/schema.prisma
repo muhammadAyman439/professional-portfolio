@@ -38,6 +38,9 @@ model Profile {
   sectors    String[] // Array of strings
   regions    String[] // Array of strings
   
+  // Admin
+  adminToken String?  // CMS admin token stored in database
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -53,11 +56,13 @@ model CaseStudy {
   keyAchievements String[] // Array of strings
   image          String
   featured       Boolean  @default(false)
+  order          Int?     // For custom ordering
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
   @@index([featured])
+  @@index([order])
 }
 
 model Insight {

@@ -39,11 +39,14 @@ export const caseStudySchema = z
     client: z.string(),
     sector: z.string(),
     contractValue: z.string(),
-    country: z.string(),
+    country: z.string().optional(),
     description: z.string(),
     keyAchievements: z.array(z.string()),
-    image: z.string().url(),
+    image: z.string().url().or(z.string().length(0)), // Allow empty string or URL
     featured: z.boolean(),
+    order: z.number().nullable().optional(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
   })
   .strict();
 
@@ -57,6 +60,8 @@ export const insightSchema = z
     date: z.string(),
     readTime: z.string(),
     featured: z.boolean(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
   })
   .strict();
 

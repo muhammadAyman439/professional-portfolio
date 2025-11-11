@@ -16,7 +16,10 @@ export default function Home() {
     isError: isCaseStudiesError,
   } = useCaseStudies();
 
-  const featuredCaseStudies = (caseStudies ?? []).filter((cs) => cs.featured).slice(0, 3);
+  const featuredCaseStudies = (caseStudies ?? [])
+    .sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+    .filter((cs) => cs.featured)
+    .slice(0, 3);
   const pageMetadata = profile ? buildPageSEO(profile).home : buildPageSEO().home;
 
   if (isProfileLoading && !profile) {
@@ -229,10 +232,7 @@ export default function Home() {
           <LottieAnimation src="https://assets1.lottiefiles.com/packages/lf20_1pxqjqps.json" speed={0.6} />
         </div>
 
-        {/* Team Collaboration - Stakeholder Coordination */}
-        <div className="absolute bottom-8 left-1/4 w-40 h-40 md:w-52 md:h-52 opacity-25 pointer-events-none float-animation">
-          <LottieAnimation src="https://assets2.lottiefiles.com/packages/lf20_myejiggj.json" speed={0.6} />
-        </div>
+     
 
         <div className="container max-w-6xl relative z-10">
           <div className="mb-16">

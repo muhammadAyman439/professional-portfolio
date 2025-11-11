@@ -47,7 +47,6 @@ export default function LottieAnimation({
       animationData={animation}
       loop={loop}
       autoplay={autoplay}
-      speed={speed}
       className={className}
       style={style}
     />

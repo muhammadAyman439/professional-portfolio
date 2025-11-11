@@ -5,9 +5,11 @@ import {
   deleteCaseStudy,
   deleteInsight,
   getAllContent,
+  getAdminToken,
   getCaseStudies,
   getInsights,
   getProfile,
+  updateAdminToken,
   updateCaseStudy,
   updateInsight,
   updateProfile,
@@ -15,9 +17,52 @@ import {
 import { CaseStudy, Insight, Profile } from "../../shared/content";
 import { caseStudySchema, insightSchema, profileSchema } from "../validation";
 import { parseValidation } from "../utils/validation";
-import { requireAdminToken } from "../middleware/auth";
+import { requireAdminToken, invalidateTokenCache } from "../middleware/auth";
 
 const contentRouter = Router();
+
+// Verify admin token endpoint
+contentRouter.post("/verify-token", requireAdminToken, (_req, res) => {
+  res.json({ valid: true });
+});
+
+// Set/update admin token endpoint
+// If no token exists in DB, allow setting without auth (initial setup)
+// If token exists, require auth to update
+contentRouter.put("/admin-token", async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    
+    if (!token || typeof token !== "string" || token.trim().length === 0) {
+      res.status(400).json({ error: "Token is required and must be a non-empty string" });
+      return;
+    }
+
+    const existingToken = await getAdminToken();
+    
+    // If token exists, require authentication to update
+    if (existingToken) {
+      // Use requireAdminToken middleware inline
+      const authorization = req.header("authorization");
+      if (!authorization) {
+        res.status(401).json({ error: "Missing Authorization header" });
+        return;
+      }
+
+      const [scheme, providedToken] = authorization.split(" ");
+      if (!scheme || scheme.toLowerCase() !== "bearer" || !providedToken || providedToken !== existingToken) {
+        res.status(403).json({ error: "Invalid token" });
+        return;
+      }
+    }
+
+    await updateAdminToken(token.trim());
+    invalidateTokenCache(); // Clear cache so new token is used immediately
+    res.json({ success: true, message: "Admin token updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+});
 
 contentRouter.get("/", async (_req, res, next) => {
   try {

@@ -1,17 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProfile, useCaseStudies, useInsights } from "@/hooks/useContent";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
-import { Pencil, Trash2, Plus, Save, X } from "lucide-react";
+import { Pencil, Trash2, Plus, Save, X, GripVertical, ArrowUp, ArrowDown } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
 import type { Profile, CaseStudy, Insight } from "@shared/content";
+
+const CMS_TOKEN_KEY = "cms_admin_token";
 
 export default function CMS() {
   const [token, setToken] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { data: profile, isLoading: profileLoading, refetch: refetchProfile } = useProfile();
   const { data: caseStudies, isLoading: caseStudiesLoading, refetch: refetchCaseStudies } = useCaseStudies();
   const { data: insights, isLoading: insightsLoading, refetch: refetchInsights } = useInsights();
@@ -20,18 +23,86 @@ export default function CMS() {
   const [editingCaseStudy, setEditingCaseStudy] = useState<CaseStudy | null>(null);
   const [editingInsight, setEditingInsight] = useState<Insight | null>(null);
 
-  const handleLogin = () => {
-    if (token.trim()) {
-      setIsAuthenticated(true);
-      toast.success("Authenticated successfully");
-    } else {
-      toast.error("Please enter a valid token");
+  // Load token from localStorage on mount and verify it
+  useEffect(() => {
+    const savedToken = localStorage.getItem(CMS_TOKEN_KEY);
+    if (savedToken) {
+      setToken(savedToken);
+      // Verify the saved token
+      verifyToken(savedToken);
+    }
+  }, []);
+
+  const verifyToken = async (tokenToVerify: string) => {
+    setIsAuthenticating(true);
+    try {
+      const response = await fetch("/api/content/verify-token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tokenToVerify}`,
+        },
+      });
+
+      if (response.ok) {
+        setIsAuthenticated(true);
+        setToken(tokenToVerify);
+      } else {
+        // Token is invalid, remove from localStorage
+        localStorage.removeItem(CMS_TOKEN_KEY);
+        setToken("");
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      // On error, don't auto-login but keep token in storage for manual retry
+      setIsAuthenticated(false);
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+
+  const handleLogin = async () => {
+    if (!token.trim()) {
+      toast.error("Please enter a token");
+      return;
+    }
+
+    setIsAuthenticating(true);
+    try {
+      const response = await fetch("/api/content/verify-token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setIsAuthenticated(true);
+        // Save token to localStorage for future sessions
+        localStorage.setItem(CMS_TOKEN_KEY, token.trim());
+        toast.success("✓ Authenticated successfully");
+      } else if (response.status === 401 || response.status === 403) {
+        toast.error("✗ Invalid admin token. Access denied.");
+        setToken("");
+        localStorage.removeItem(CMS_TOKEN_KEY);
+        setIsAuthenticated(false);
+      } else {
+        toast.error("Authentication failed. Please try again.");
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      toast.error("Failed to authenticate. Please check your connection.");
+      setIsAuthenticated(false);
+    } finally {
+      setIsAuthenticating(false);
     }
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     setToken("");
+    localStorage.removeItem(CMS_TOKEN_KEY);
     toast.info("Logged out");
   };
 
@@ -46,6 +117,15 @@ export default function CMS() {
     });
 
     if (!response.ok) {
+      // If unauthorized, log out the user and clear localStorage
+      if (response.status === 401 || response.status === 403) {
+        setIsAuthenticated(false);
+        setToken("");
+        localStorage.removeItem(CMS_TOKEN_KEY);
+        toast.error("Session expired or invalid token. Please login again.");
+        throw new Error("Unauthorized");
+      }
+      
       const error = await response.json().catch(() => ({ error: "Request failed" }));
       throw new Error(error.error || `HTTP ${response.status}`);
     }
@@ -128,6 +208,41 @@ export default function CMS() {
     }
   };
 
+  const handleMoveCaseStudy = async (id: string, direction: "up" | "down") => {
+    if (!caseStudies) return;
+    
+    const sortedStudies = [...caseStudies].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+    const currentIndex = sortedStudies.findIndex(cs => cs.id === id);
+    
+    if (currentIndex === -1) return;
+    if (direction === "up" && currentIndex === 0) return;
+    if (direction === "down" && currentIndex === sortedStudies.length - 1) return;
+
+    const newIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
+    
+    // Swap orders
+    const currentStudy = sortedStudies[currentIndex];
+    const targetStudy = sortedStudies[newIndex];
+    
+    try {
+      await Promise.all([
+        apiCall(`/api/content/case-studies/${currentStudy.id}`, {
+          method: "PUT",
+          body: JSON.stringify({ ...currentStudy, order: newIndex }),
+        }),
+        apiCall(`/api/content/case-studies/${targetStudy.id}`, {
+          method: "PUT",
+          body: JSON.stringify({ ...targetStudy, order: currentIndex }),
+        }),
+      ]);
+      
+      toast.success("Order updated");
+      refetchCaseStudies();
+    } catch (error) {
+      toast.error(`Failed to reorder: ${error instanceof Error ? error.message : "Unknown error"}`);
+    }
+  };
+
   // Insight handlers
   const handleCreateInsight = () => {
     setEditingInsight({
@@ -183,7 +298,13 @@ export default function CMS() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Card className="p-8 max-w-md w-full">
           <h1 className="text-3xl font-display font-bold mb-6 text-center">CMS Login</h1>
-          <div className="space-y-4">
+          {isAuthenticating && localStorage.getItem(CMS_TOKEN_KEY) ? (
+            <div className="flex items-center justify-center gap-3 py-8">
+              <Spinner className="size-6" />
+              <span className="text-foreground/60">Verifying saved token...</span>
+            </div>
+          ) : (
+            <div className="space-y-4">
             <div>
               <label htmlFor="token" className="block text-sm font-semibold mb-2">
                 Admin Token
@@ -193,15 +314,28 @@ export default function CMS() {
                 id="token"
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                onKeyDown={(e) => e.key === "Enter" && !isAuthenticating && handleLogin()}
                 placeholder="Enter your CMS_ADMIN_TOKEN"
-                className="w-full px-4 py-3 bg-background border border-foreground/20 rounded-lg text-foreground placeholder-foreground/50 focus:outline-none focus:border-primary transition-colors"
+                disabled={isAuthenticating}
+                className="w-full px-4 py-3 bg-background border border-foreground/20 rounded-lg text-foreground placeholder-foreground/50 focus:outline-none focus:border-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
-            <Button onClick={handleLogin} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-              Login
+            <Button 
+              onClick={handleLogin} 
+              disabled={isAuthenticating}
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isAuthenticating ? (
+                <span className="flex items-center gap-2">
+                  <Spinner className="size-4" />
+                  Verifying...
+                </span>
+              ) : (
+                "Login"
+              )}
             </Button>
           </div>
+          )}
         </Card>
       </div>
     );
@@ -599,9 +733,31 @@ export default function CMS() {
               </Card>
             ) : (
               <div className="space-y-4">
-                {caseStudies?.map((study) => (
+                {caseStudies
+                  ?.sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+                  .map((study, index) => (
                   <Card key={study.id} className="p-6">
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-4">
+                      <div className="flex flex-col gap-2 pt-1">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleMoveCaseStudy(study.id, "up")}
+                          disabled={index === 0}
+                          className="h-8 w-8 p-0"
+                        >
+                          <ArrowUp className="size-4" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleMoveCaseStudy(study.id, "down")}
+                          disabled={index === (caseStudies?.length ?? 0) - 1}
+                          className="h-8 w-8 p-0"
+                        >
+                          <ArrowDown className="size-4" />
+                        </Button>
+                      </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <h3 className="text-xl font-bold">{study.title}</h3>

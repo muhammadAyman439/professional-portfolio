@@ -35,6 +35,7 @@ export interface CaseStudy {
   keyAchievements: string[];
   image: string;
   featured: boolean;
+  order?: number | null;
 }
 
 export interface Insight {

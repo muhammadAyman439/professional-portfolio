@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import contentRouter from "./routes/content";
 import uploadRouter from "./routes/upload";
+import { getAdminToken, updateAdminToken } from "./contentStore";
 
 dotenv.config();
 
@@ -13,6 +14,25 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function startServer() {
+  // Initialize admin token from .env if not set in database
+  try {
+    const dbToken = await getAdminToken();
+    const envToken = process.env.CMS_ADMIN_TOKEN;
+    
+    if (!dbToken && envToken) {
+      console.log("Initializing admin token from .env file...");
+      await updateAdminToken(envToken);
+      console.log("✓ Admin token initialized from .env");
+    } else if (!dbToken) {
+      console.warn("⚠ Warning: No admin token found in database or .env file.");
+      console.warn("   Set CMS_ADMIN_TOKEN in .env or use PUT /api/content/admin-token to set it.");
+    } else {
+      console.log("✓ Admin token loaded from database");
+    }
+  } catch (error) {
+    console.error("Error initializing admin token:", error);
+  }
+
   const app = express();
   const server = createServer(app);
 
@@ -49,8 +69,7 @@ async function startServer() {
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
-    console.log(process.env.CMS_ADMIN_TOKEN);
-    console.log(`CMS_ADMIN_TOKEN is ${process.env.CMS_ADMIN_TOKEN ? 'configured ✓' : 'NOT configured ✗'}`);
+
   });
 }
 
