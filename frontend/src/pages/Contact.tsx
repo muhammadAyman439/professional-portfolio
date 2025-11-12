@@ -6,6 +6,7 @@ import { buildPageSEO } from "@/lib/seo";
 import { Spinner } from "@/components/ui/spinner";
 import { useProfile, useFAQs } from "@/hooks/useContent";
 import LottieAnimation from "@/components/LottieAnimation";
+import apiClient from "@/api/http";
 // animations loaded via CDN URLs using LottieAnimation `src`
 
 export default function Contact() {
@@ -37,32 +38,7 @@ export default function Contact() {
     setError(null);
 
     try {
-      const response = await fetch("/api/email/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle validation errors with detailed messages
-        if (data.details?.fieldErrors) {
-          const fieldErrors = data.details.fieldErrors;
-          const errorMessages: string[] = [];
-          
-          // Collect all field error messages
-          if (fieldErrors.name?.length) errorMessages.push(...fieldErrors.name);
-          if (fieldErrors.email?.length) errorMessages.push(...fieldErrors.email);
-          if (fieldErrors.message?.length) errorMessages.push(...fieldErrors.message);
-          
-          throw new Error(errorMessages.join(". ") || data.error);
-        }
-        
-        throw new Error(data.error || "Failed to send message");
-      }
+      const { data } = await apiClient.post("/email/contact", formData);
 
       setSubmitted(true);
       setFormData({ name: "", email: "", message: "" });
@@ -71,8 +47,30 @@ export default function Contact() {
       setTimeout(() => {
         setSubmitted(false);
       }, 5000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send message. Please try again.");
+    } catch (err: any) {
+      // Handle axios errors
+      if (err.response) {
+        const errorData = err.response.data;
+        
+        // Handle validation errors with detailed messages
+        if (errorData?.details?.fieldErrors) {
+          const fieldErrors = errorData.details.fieldErrors;
+          const errorMessages: string[] = [];
+          
+          // Collect all field error messages
+          if (fieldErrors.name?.length) errorMessages.push(...fieldErrors.name);
+          if (fieldErrors.email?.length) errorMessages.push(...fieldErrors.email);
+          if (fieldErrors.message?.length) errorMessages.push(...fieldErrors.message);
+          
+          setError(errorMessages.join(". ") || errorData.error || "Failed to send message");
+        } else {
+          setError(errorData?.error || `Failed to send message (${err.response.status})`);
+        }
+      } else if (err.request) {
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        setError(err.message || "Failed to send message. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }

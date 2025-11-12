@@ -9,12 +9,13 @@ export const runtime = "nodejs";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await assertAdminRequest(request);
+    const { id } = await params;
     const payload = parseValidation(caseStudySchema.partial(), await request.json());
-    const updated = await updateCaseStudy(params.id, payload);
+    const updated = await updateCaseStudy(id, payload);
     return jsonResponse(updated);
   } catch (error) {
     return handleError(error);
@@ -23,11 +24,12 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await assertAdminRequest(request);
-    await deleteCaseStudy(params.id);
+    const { id } = await params;
+    await deleteCaseStudy(id);
     return jsonResponse(null, { status: 204 });
   } catch (error) {
     return handleError(error);

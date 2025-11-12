@@ -1,0 +1,22 @@
+PORT=4000
+# Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME=dnq0ejcbg
+CLOUDINARY_API_KEY=644791631868927
+CLOUDINARY_API_SECRET=pXDIi74fUBB08PgnUka7ds2jnHw
+CLOUDINARY_UPLOAD_PRESET=portfolio
+
+# keep Neon credentials secure: do not expose them to client-side code
+
+DATABASE_URL='postgresql://neondb_owner:npg_E5dXT4IgcWyx@ep-shy-water-adv1dy31-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+
+em=MohamedSalahMerza@proton.me
+
+# Resend Email Configuration
+RESEND_API_KEY="re_eWAAmkQU_GkB21oQ2YsiVzqtn2LWt4eXB"
+
+# Email addresses
+CONTACT_EMAIL="mohamedsalahmerza@proton.me"
+PROFILE_EMAIL="mohamedsalahmerza@proton.me"
+
+# The "from" email address (must be verified in Resend)
+FROM_EMAIL="onboarding@resend.dev"

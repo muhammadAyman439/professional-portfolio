@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Button } from "./ui/button";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
+import apiClient from "@/api/http";
 
 interface ImageUploadProps {
   currentImage?: string;
@@ -47,24 +48,22 @@ export default function ImageUpload({
         const base64 = event.target?.result as string;
 
         // Upload to server
-        const response = await fetch("/api/upload", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
+        const { data } = await apiClient.post(
+          "/upload",
+          {
             image: base64,
             filename: file.name,
-          }),
-        });
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.error || "Upload failed");
+        if (!data) {
+          throw new Error("Upload failed: No response data");
         }
-
-        const data = await response.json();
         setPreview(data.url);
         onImageChange(data.url);
         
@@ -80,8 +79,16 @@ export default function ImageUpload({
       };
 
       reader.readAsDataURL(file);
-    } catch (error) {
-      toast.error(`Upload failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+    } catch (error: any) {
+      // Handle axios errors
+      if (error.response) {
+        const errorData = error.response.data;
+        toast.error(errorData?.error || `Upload failed (${error.response.status})`);
+      } else if (error.request) {
+        toast.error("Network error. Please check your connection and try again.");
+      } else {
+        toast.error(error.message || "Upload failed. Please try again.");
+      }
     } finally {
       setUploading(false);
     }

@@ -7,6 +7,7 @@ import { buildPageSEO } from "@/lib/seo";
 import { Spinner } from "@/components/ui/spinner";
 import { useInsights, useProfile } from "@/hooks/useContent";
 import LottieAnimation from "@/components/LottieAnimation";
+import apiClient from "@/api/http";
 // animations loaded via CDN URLs using LottieAnimation `src`
 
 export default function Insights() {
@@ -25,30 +26,7 @@ export default function Insights() {
     setSubscribeError(null);
 
     try {
-      const response = await fetch("/api/email/newsletter", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: newsletterEmail }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle validation errors with detailed messages
-        if (data.details?.fieldErrors) {
-          const fieldErrors = data.details.fieldErrors;
-          const errorMessages: string[] = [];
-          
-          // Collect all field error messages
-          if (fieldErrors.email?.length) errorMessages.push(...fieldErrors.email);
-          
-          throw new Error(errorMessages.join(". ") || data.error);
-        }
-        
-        throw new Error(data.error || "Failed to subscribe");
-      }
+      await apiClient.post("/email/newsletter", { email: newsletterEmail });
 
       setSubscribeSuccess(true);
       setNewsletterEmail("");
@@ -57,8 +35,28 @@ export default function Insights() {
       setTimeout(() => {
         setSubscribeSuccess(false);
       }, 5000);
-    } catch (err) {
-      setSubscribeError(err instanceof Error ? err.message : "Failed to subscribe. Please try again.");
+    } catch (err: any) {
+      // Handle axios errors
+      if (err.response) {
+        const errorData = err.response.data;
+        
+        // Handle validation errors with detailed messages
+        if (errorData?.details?.fieldErrors) {
+          const fieldErrors = errorData.details.fieldErrors;
+          const errorMessages: string[] = [];
+          
+          // Collect all field error messages
+          if (fieldErrors.email?.length) errorMessages.push(...fieldErrors.email);
+          
+          setSubscribeError(errorMessages.join(". ") || errorData.error || "Failed to subscribe");
+        } else {
+          setSubscribeError(errorData?.error || `Failed to subscribe (${err.response.status})`);
+        }
+      } else if (err.request) {
+        setSubscribeError("Network error. Please check your connection and try again.");
+      } else {
+        setSubscribeError(err.message || "Failed to subscribe. Please try again.");
+      }
     } finally {
       setIsSubscribing(false);
     }

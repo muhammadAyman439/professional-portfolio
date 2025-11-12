@@ -9,12 +9,13 @@ export const runtime = "nodejs";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await assertAdminRequest(request);
+    const { id } = await params;
     const payload = parseValidation(insightSchema.partial(), await request.json());
-    const updated = await updateInsight(params.id, payload);
+    const updated = await updateInsight(id, payload);
     return jsonResponse(updated);
   } catch (error) {
     return handleError(error);
@@ -23,11 +24,12 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await assertAdminRequest(request);
-    await deleteInsight(params.id);
+    const { id } = await params;
+    await deleteInsight(id);
     return jsonResponse(null, { status: 204 });
   } catch (error) {
     return handleError(error);

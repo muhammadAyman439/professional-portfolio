@@ -29,5 +29,9 @@ export function handleError(error: unknown) {
 }
 
 export function jsonResponse<T>(data: T, init?: ResponseInit) {
+  // For 204 No Content, return empty response without body
+  if (init?.status === 204) {
+    return new NextResponse(null, { status: 204 });
+  }
   return NextResponse.json(data, init);
 }
