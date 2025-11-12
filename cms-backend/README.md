@@ -46,10 +46,6 @@ pnpm install
 ```bash
 # .env.local
 
-# API URL (optional). Defaults to /api when not provided.
-# Set this if you host the API under a different domain.
-NEXT_PUBLIC_API_URL=/api
-
 # Database
 DATABASE_URL="file:./dev.db"
 
@@ -100,41 +96,30 @@ This will run the compiled Next.js app (including API routes) on the configured 
 
 ## Deployment
 
-### Option 1: Deploy Together (Single Server)
+### Vercel (Recommended)
 
-Best for platforms like Railway, Render, or a VPS.
+The CMS and API are integrated in a single Next.js app. Deploy to Vercel:
 
-1. Build the Next.js app
-2. Deploy both the Express server and Next.js
-3. Set environment variables
-4. Run migrations
+1. Connect your repository to Vercel
+2. Configure environment variables:
+   - `DATABASE_URL` - Your production database URL
+   - `CMS_ADMIN_TOKEN` - Secure admin token
+   - `ALLOWED_ORIGINS` - Frontend URLs (e.g., `https://your-frontend.com`)
+   - `RESEND_API_KEY` - (Optional) For email functionality
+3. Vercel will automatically:
+   - Install dependencies
+   - Generate Prisma client
+   - Build the Next.js app
+   - Deploy API routes as serverless functions
 
-Example `start` script:
-```json
-{
-  "start": "node server.js & next start"
-}
-```
+### Other Platforms
 
-### Option 2: Deploy Separately
+For Railway, Render, or similar:
 
-#### CMS Frontend (Vercel/Netlify)
-1. Deploy Next.js app to Vercel or Netlify
-2. Set `NEXT_PUBLIC_API_URL` to your API server URL
-3. Build command: `pnpm build`
-4. Output directory: `.next`
-
-#### API Backend (Railway/Render/Heroku)
-1. Deploy the Express server
-2. Set all environment variables including `DATABASE_URL`
-3. Run migrations on first deploy
-4. Start command: `node server.js`
-
-### Option 3: Serverless (Vercel)
-
-Deploy everything to Vercel:
-1. The Next.js app handles the CMS frontend
-2. You'll need to convert Express routes to Vercel serverless functions or use a different deployment strategy
+1. Set build command: `pnpm install && pnpm prisma generate && pnpm build`
+2. Set start command: `pnpm start`
+3. Configure environment variables (same as Vercel)
+4. Run database migrations: `pnpm prisma migrate deploy`
 
 ## Database Management
 
@@ -202,7 +187,6 @@ All API endpoints are prefixed with `/api/`:
 ### Required
 - `DATABASE_URL` - Database connection string
 - `CMS_ADMIN_TOKEN` - Admin authentication token
-- `NEXT_PUBLIC_API_URL` - API server URL (for CMS frontend)
 
 ### Optional
 - `ALLOWED_ORIGINS` - Comma-separated list of allowed CORS origins (for production)
@@ -210,7 +194,6 @@ All API endpoints are prefixed with `/api/`:
   - In development, all origins are allowed by default
   - Default: localhost ports (3000, 5173, 5174)
 - `RESEND_API_KEY` - For email functionality
-- `PORT` - API server port (default: 4000)
 - `NODE_ENV` - Environment mode (`development` or `production`)
 
 ## License

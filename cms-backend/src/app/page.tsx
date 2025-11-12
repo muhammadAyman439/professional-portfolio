@@ -10,7 +10,8 @@ import { ArrowDown, ArrowUp, Pencil, Plus, Save, Trash2, X } from "lucide-react"
 import ImageUpload from "@/components/image-upload";
 import type { CaseStudy, FAQ, Insight, Profile } from "@/types/content";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
+// CMS and API are in the same Next.js app
+const API_URL = "/api";
 const CMS_TOKEN_KEY = "cms_admin_token";
 
 class ApiError extends Error {
