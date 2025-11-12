@@ -39,7 +39,7 @@ export const caseStudySchema = z
     client: z.string(),
     sector: z.string(),
     contractValue: z.string(),
-    country: z.string().optional(),
+    country: z.string(),
     description: z.string(),
     keyAchievements: z.array(z.string()),
     image: z.string().url().or(z.string().length(0)),
