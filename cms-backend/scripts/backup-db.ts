@@ -46,10 +46,10 @@ async function backup() {
       linkedin: profile.linkedin,
       twitter: profile.twitter,
       stats: {
-        years: profile.statsYears,
-        proposals: profile.statsProposals,
-        clients: profile.statsClients,
-        successRate: profile.statsSuccessRate,
+        yearsOfExperience: profile.statsYearsOfExperience,
+        totalFundingSecured: profile.statsTotalFundingSecured,
+        countries: profile.statsCountries,
+        winningRate: profile.statsWinningRate,
       },
       bio: {
         short: profile.bioShort,
