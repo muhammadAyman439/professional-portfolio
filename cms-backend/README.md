@@ -23,7 +23,6 @@ cms-backend/
 ├── data/                # Seed data JSON files
 ├── prisma/              # Database schema and migrations
 ├── scripts/             # Utility scripts
-├── prisma.config.ts
 └── package.json
 ```
 
