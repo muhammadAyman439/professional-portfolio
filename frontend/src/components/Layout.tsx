@@ -121,15 +121,13 @@ export default function Layout({ children }: LayoutProps) {
                 {link.label}
               </Link>
             ))}
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-[10px] uppercase tracking-[0.35em] text-primary/70">Soon</span>
-              <Button
-                className="bg-gradient-to-r from-sky-500 via-indigo-500 to-violet-500 text-white shadow-lg hover:opacity-90 transition-opacity"
-                onClick={() => setIsMerzaOverlayOpen(true)}
-              >
-                Merza Group
-              </Button>
-            </div>
+            <Button
+              className="h-auto px-4 py-2.5 bg-gradient-to-r from-sky-500 via-indigo-500 to-violet-500 text-white shadow-lg hover:opacity-90 transition-opacity flex flex-col items-center gap-[2px]"
+              onClick={() => setIsMerzaOverlayOpen(true)}
+            >
+              <span className="text-[8px] uppercase tracking-[0.35em] text-white/70">Soon</span>
+              <span className="text-xs font-semibold">Merza Group</span>
+            </Button>
             <Link href="/contact">
               <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 Get in Touch
@@ -161,18 +159,16 @@ export default function Layout({ children }: LayoutProps) {
                   {link.label}
                 </Link>
               ))}
-              <div className="flex flex-col items-start gap-2 border border-dashed border-primary/30 rounded-xl p-4 bg-background/80">
-                <span className="text-[10px] uppercase tracking-[0.3em] text-primary/70">Soon</span>
-                <Button
-                  className="bg-gradient-to-r from-sky-500 via-indigo-500 to-violet-500 text-white shadow-lg hover:opacity-95 transition-opacity"
-                  onClick={() => {
-                    setIsMerzaOverlayOpen(true);
-                    setIsMenuOpen(false);
-                  }}
-                >
-                  Merza Group
-                </Button>
-              </div>
+              <Button
+                className="h-auto px-4 py-2.5 bg-gradient-to-r from-sky-500 via-indigo-500 to-violet-500 text-white shadow-lg hover:opacity-95 transition-opacity flex flex-col items-center gap-[2px]"
+                onClick={() => {
+                  setIsMerzaOverlayOpen(true);
+                  setIsMenuOpen(false);
+                }}
+              >
+                <span className="text-[8px] uppercase tracking-[0.35em] text-white/70">Soon</span>
+                <span className="text-xs font-semibold">Merza Group</span>
+              </Button>
               <Link href="/contact" onClick={() => setIsMenuOpen(false)}>
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
                   Get in Touch
