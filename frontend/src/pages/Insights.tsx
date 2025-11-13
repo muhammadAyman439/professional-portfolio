@@ -10,6 +10,7 @@ import { useInsights, useProfile } from "@/hooks/useContent";
 import LottieAnimation from "@/components/LottieAnimation";
 import apiClient from "@/api/http";
 // animations loaded via CDN URLs using LottieAnimation `src`
+import { cn } from "@/lib/utils";
 
 export default function Insights() {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -165,19 +166,23 @@ export default function Insights() {
             </div>
           ) : (
             <div className="flex flex-wrap gap-3">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 capitalize ${
-                    selectedCategory === category
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-foreground/5 text-foreground hover:bg-foreground/10"
-                  }`}
-                >
-                  {category === "all" ? "All Articles" : category}
-                </button>
-              ))}
+              {categories.map((category) => {
+                const isSelected = selectedCategory === category;
+                return (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={cn(
+                      "px-4 py-2 rounded-lg font-medium transition-all duration-200 capitalize text-slate-900 border border-transparent",
+                      isSelected
+                        ? "bg-primary/20 border-primary text-slate-900"
+                        : "bg-foreground/5 hover:bg-foreground/10"
+                    )}
+                  >
+                    {category === "all" ? "All Articles" : category}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -243,11 +248,9 @@ export default function Insights() {
                 </p>
 
                 {/* Read More Link */}
-                <Link href={`/insights/${article.id}`}>
-                  <button className="inline-flex items-center gap-2 text-primary hover:gap-3 transition-all font-semibold group">
-                    Read Full Article
-                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </button>
+                <Link href={`/insights/${article.id}`} className="inline-flex items-center gap-2 text-primary hover:gap-3 transition-all font-semibold group">
+                  <span className="text-primary">Read Full Article</span>
+                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
               </article>
               ))}
@@ -265,8 +268,8 @@ export default function Insights() {
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-foreground/2">
-        <div className="container max-w-3xl mx-auto text-center">
+      <section className="section-padding bg-foreground/2 relative overflow-hidden">
+        <div className="container max-w-6xl relative z-10">
           <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
             Stay Updated
           </h2>
@@ -305,10 +308,10 @@ export default function Insights() {
                   disabled={isSubscribing}
                   className="flex-1 px-4 py-3 bg-background border border-foreground/20 rounded-lg text-foreground placeholder-foreground/50 focus:outline-none focus:border-primary transition-colors disabled:opacity-50"
                 />
-                <Button 
+                <Button
                   type="submit"
                   disabled={isSubscribing}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-primary hover:bg-primary/90 text-slate-900 dark:text-slate-950 px-6 py-3 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubscribing ? (
                     <>

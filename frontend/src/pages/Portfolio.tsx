@@ -82,7 +82,7 @@ export default function Portfolio() {
                   onClick={() => setSelectedSector(sector)}
                   className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 capitalize ${
                     selectedSector === sector
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-primary text-slate-900 dark:text-slate-950"
                       : "bg-foreground/5 text-foreground hover:bg-foreground/10"
                   }`}
                 >
@@ -210,7 +210,7 @@ export default function Portfolio() {
             Let's explore how proposal strategy and excellence can drive business growth.
           </p>
           <Link href="/contact">
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-base font-semibold group">
+            <Button className="bg-primary hover:bg-primary/90 text-slate-900 dark:text-slate-950 px-8 py-6 text-base font-semibold group">
               Let's Connect
               <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
             </Button>

@@ -144,7 +144,7 @@ export default function About() {
               </p>
 
               <Link href="/contact">
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-base font-semibold group">
+                <Button className="bg-primary hover:bg-primary/90 text-slate-900 dark:text-slate-950 px-8 py-6 text-base font-semibold group">
                   Let's Connect
                   <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
                 </Button>
@@ -304,14 +304,14 @@ export default function About() {
               target="_blank"
               rel="noreferrer"
             >
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-base font-semibold group">
+              <Button className="bg-primary hover:bg-primary/90 text-slate-900 dark:text-slate-950 px-8 py-6 text-base font-semibold group">
                 {cta.buttonLabel || DEFAULT_CTA.buttonLabel}
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
               </Button>
             </a>
           ) : (
             <Link href={cta.buttonHref || DEFAULT_CTA.buttonHref}>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-base font-semibold group">
+              <Button className="bg-primary hover:bg-primary/90 text-slate-900 dark:text-slate-950 px-8 py-6 text-base font-semibold group">
                 {cta.buttonLabel || DEFAULT_CTA.buttonLabel}
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
               </Button>

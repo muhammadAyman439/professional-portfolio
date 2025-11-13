@@ -108,7 +108,7 @@ export default function Home() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/portfolio">
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-base font-semibold group">
+                <Button className="bg-primary hover:bg-primary/90 text-slate-900 dark:text-slate-950 px-8 py-6 text-base font-semibold group">
                   View Portfolio
                   <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
                 </Button>
@@ -352,8 +352,7 @@ export default function Home() {
           <div className="text-center">
             <Link href="/insights">
               <Button
-                variant="outline"
-                className="px-8 py-6 text-base font-semibold border-foreground/20 text-foreground hover:bg-foreground/5"
+                className="bg-primary hover:bg-primary/90 text-slate-900 dark:text-slate-950 px-8 py-6 text-base font-semibold"
               >
                 View All Insights
               </Button>
@@ -379,7 +378,7 @@ export default function Home() {
           From strategy to submission, I partner with teams to deliver proposals that score higher and secure funding.
           </p>
           <Link href="/contact">
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-base font-semibold group">
+            <Button className="bg-primary hover:bg-primary/90 text-slate-900 dark:text-slate-950 px-8 py-6 text-base font-semibold group">
               Let's Connect
               <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
             </Button>
