@@ -63,7 +63,25 @@ export default function Layout({ children }: LayoutProps) {
   }, [isMerzaOverlayOpen]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground cursor-auto md:cursor-none">
+    <>
+      <style>
+        {`
+          @keyframes merzaFloat {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+            100% { transform: translateY(0); }
+          }
+          .merza-float {
+            animation: merzaFloat 4s ease-in-out infinite;
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .merza-float {
+              animation: none !important;
+            }
+          }
+        `}
+      </style>
+      <div className="min-h-screen flex flex-col bg-background text-foreground cursor-auto md:cursor-none">
       {showCustomCursor && (
         <div
           className="pointer-events-none fixed z-[80] hidden md:block transition-transform duration-150 ease-out"
@@ -122,11 +140,21 @@ export default function Layout({ children }: LayoutProps) {
               </Link>
             ))}
             <Button
-              className="h-auto px-4 py-2.5 rounded-full bg-white text-black shadow-[0_10px_25px_rgba(15,23,42,0.15)] hover:scale-[1.02] transition-transform duration-200 flex flex-col items-center gap-[2px]"
+              className="merza-float group relative h-auto px-5 py-2 rounded-full border border-slate-300/70 bg-slate-100/95 text-slate-900 shadow-[0_6px_18px_rgba(148,163,184,0.25)] transition-all duration-300 hover:border-sky-400/70 hover:bg-white hover:text-slate-900 flex items-center gap-3 overflow-hidden"
               onClick={() => setIsMerzaOverlayOpen(true)}
             >
-              <span className="text-[8px] uppercase tracking-[0.35em] text-slate-500">Soon</span>
-              <span className="text-xs font-semibold">Merza Group</span>
+              <span className="relative flex items-center justify-center">
+                <span className="absolute inline-flex h-3 w-3 rounded-full bg-sky-400/40 opacity-70 group-hover:opacity-100 animate-ping" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-sky-500" />
+              </span>
+              <span className="flex flex-col text-left leading-tight">
+                <span className="text-[9px] uppercase tracking-[0.4em] text-slate-600 group-hover:text-slate-800 transition-colors">
+                  Soon
+                </span>
+                <span className="text-xs font-semibold tracking-wide text-black group-hover:text-slate-900 group-hover:translate-x-0.5 transition-transform duration-300">
+                  Merza Group
+                </span>
+              </span>
             </Button>
             <Link href="/contact">
               <Button className="bg-primary hover:bg-primary/90 text-slate-900 dark:text-slate-950">
@@ -160,14 +188,24 @@ export default function Layout({ children }: LayoutProps) {
                 </Link>
               ))}
               <Button
-                className="h-auto px-4 py-2.5 rounded-full bg-white text-black shadow-[0_10px_25px_rgba(15,23,42,0.15)] hover:scale-[1.02] transition-transform duration-200 flex flex-col items-center gap-[2px]"
+                className="merza-float group relative h-auto px-5 py-2 rounded-full border border-slate-300/70 bg-slate-100/95 text-slate-900 shadow-[0_6px_18px_rgba(148,163,184,0.25)] transition-all duration-300 hover:border-sky-400/70 hover:bg-white hover:text-slate-900 flex items-center gap-3 overflow-hidden"
                 onClick={() => {
                   setIsMerzaOverlayOpen(true);
                   setIsMenuOpen(false);
                 }}
               >
-                <span className="text-[8px] uppercase tracking-[0.35em] text-slate-500">Soon</span>
-                <span className="text-xs font-semibold">Merza Group</span>
+                <span className="relative flex items-center justify-center">
+                  <span className="absolute inline-flex h-3 w-3 rounded-full bg-sky-400/40 opacity-70 group-hover:opacity-100 animate-ping" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-sky-500" />
+                </span>
+                <span className="flex flex-col text-left leading-tight">
+                  <span className="text-[9px] uppercase tracking-[0.4em] text-slate-600 group-hover:text-slate-800 transition-colors">
+                    Soon
+                  </span>
+                  <span className="text-xs font-semibold tracking-wide text-black group-hover:text-slate-900 group-hover:translate-x-0.5 transition-transform duration-300">
+                    Merza Group
+                  </span>
+                </span>
               </Button>
               <Link href="/contact" onClick={() => setIsMenuOpen(false)}>
                 <Button className="w-full bg-primary hover:bg-primary/90 text-slate-900 dark:text-slate-950">
@@ -240,6 +278,7 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </footer>
     </div>
+    </>
   );
 }
 
