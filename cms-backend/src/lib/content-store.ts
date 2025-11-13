@@ -457,6 +457,34 @@ export async function getInsights(): Promise<Insight[]> {
   });
 }
 
+export async function addNewsletterSubscriber(
+  email: string
+): Promise<{ created: boolean }> {
+  try {
+    await prisma.newsletterSubscriber.create({
+      data: { email },
+    });
+    return { created: true };
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return { created: false };
+    }
+    throw error;
+  }
+}
+
+export async function getNewsletterSubscribers(): Promise<
+  Array<{ email: string }>
+> {
+  return prisma.newsletterSubscriber.findMany({
+    select: { email: true },
+    orderBy: { createdAt: "asc" },
+  });
+}
+
 export async function createInsight(
   payload: Omit<Insight, "id"> & Partial<Pick<Insight, "id">>
 ): Promise<Insight> {

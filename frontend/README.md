@@ -58,6 +58,9 @@ pnpm preview
 ## Environment Variables
 
 - `VITE_API_BASE_URL` - The base URL for the backend API (required)
+- `VITE_EMAILJS_SERVICE_ID` - EmailJS service ID for sending subscriber confirmations
+- `VITE_EMAILJS_NEWSLETTER_TEMPLATE_ID` - EmailJS template ID used for the welcome email
+- `VITE_EMAILJS_PUBLIC_KEY` - EmailJS public key used by the browser client
 
 ## Deployment
 

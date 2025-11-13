@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import emailjs from "@emailjs/browser";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -27,6 +28,35 @@ const DEFAULT_CTA: ProfileCTA = {
   buttonLabel: "Get in Touch",
   buttonHref: "/contact",
 };
+
+type NewsletterSubscriber = {
+  email: string;
+};
+
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? "";
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY ?? "";
+const EMAILJS_NEW_INSIGHT_TEMPLATE_ID =
+  process.env.NEXT_PUBLIC_EMAILJS_NEW_INSIGHT_TEMPLATE_ID ?? "";
+
+function getPortfolioBaseUrl() {
+  const candidates = [
+    process.env.NEXT_PUBLIC_PORTFOLIO_BASE_URL,
+    process.env.NEXT_PUBLIC_SITE_BASE_URL,
+    process.env.NEXT_PUBLIC_SITE_URL,
+  ];
+
+  for (const candidate of candidates) {
+    if (candidate && candidate.trim().length > 0) {
+      return candidate.replace(/\/+$/, "");
+    }
+  }
+
+  if (typeof window !== "undefined") {
+    return window.location.origin.replace(/\/+$/, "");
+  }
+
+  return "";
+}
 
 const createEmptyApproachStep = (): ApproachStep => ({
   title: "",
@@ -199,6 +229,75 @@ export default function CMSPage() {
       toast.error("Failed to load insights");
     } finally {
       setInsightsLoading(false);
+    }
+  };
+
+  const broadcastInsightToSubscribers = async (insight: Insight) => {
+    if (!EMAILJS_SERVICE_ID || !EMAILJS_PUBLIC_KEY || !EMAILJS_NEW_INSIGHT_TEMPLATE_ID) {
+      toast.warning("Newsletter broadcast skipped: EmailJS configuration incomplete.");
+      return;
+    }
+
+    let subscribers: NewsletterSubscriber[] = [];
+    try {
+      subscribers = await authorizedRequest<NewsletterSubscriber[]>(
+        "/content/newsletter-subscribers",
+      );
+    } catch (error) {
+      console.error("Failed to load newsletter subscribers", error);
+      toast.error("Insight saved, but subscriber list couldn't be loaded.");
+      return;
+    }
+
+    if (!subscribers.length) {
+      toast.info("Insight saved. No newsletter subscribers to notify yet.");
+      return;
+    }
+
+    const baseUrl = getPortfolioBaseUrl();
+    const articleUrl = baseUrl ? `${baseUrl}/insights/${insight.id}` : `/insights/${insight.id}`;
+
+    const paramsBase = {
+      title: insight.title,
+      summary: insight.excerpt,
+      link: articleUrl,
+    };
+
+    const results = await Promise.allSettled(
+      subscribers.map((subscriber) =>
+        emailjs.send(
+          EMAILJS_SERVICE_ID,
+          EMAILJS_NEW_INSIGHT_TEMPLATE_ID,
+          {
+            ...paramsBase,
+            subscriber_email: subscriber.email,
+            to_email: subscriber.email,
+            email: subscriber.email,
+            user_email: subscriber.email,
+            to_name: subscriber.email.split("@")[0] ?? "Subscriber",
+            name: subscriber.email.split("@")[0] ?? "Subscriber",
+          },
+          {
+            publicKey: EMAILJS_PUBLIC_KEY,
+          },
+        ),
+      ),
+    );
+
+    const failures = results.filter(
+      (result): result is PromiseRejectedResult => result.status === "rejected",
+    );
+
+    if (!failures.length) {
+      toast.success(`Insight broadcast sent to ${subscribers.length} subscriber(s).`);
+    } else if (failures.length === subscribers.length) {
+      toast.error("Insight saved, but emails failed to send to all subscribers.");
+    } else {
+      toast.warning(
+        `Insight broadcast sent to ${
+          subscribers.length - failures.length
+        } subscriber(s). ${failures.length} failure(s); please review EmailJS logs.`,
+      );
     }
   };
 
@@ -429,11 +528,12 @@ export default function CMSPage() {
         toast.success("Insight updated");
       } else {
         const { id, ...payload } = editingInsight;
-        await authorizedRequest("/content/insights", {
+        const created = await authorizedRequest<Insight>("/content/insights", {
           method: "POST",
           body: JSON.stringify(payload),
         });
         toast.success("Insight created");
+        await broadcastInsightToSubscribers(created);
       }
 
       setEditingInsight(null);

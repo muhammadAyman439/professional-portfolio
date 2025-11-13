@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { ArrowRight, Calendar, Clock } from "lucide-react";
 import { useState } from "react";
+import emailjs from "@emailjs/browser";
 import SEOHead from "@/components/SEOHead";
 import { buildPageSEO } from "@/lib/seo";
 import { Spinner } from "@/components/ui/spinner";
@@ -15,6 +16,7 @@ export default function Insights() {
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [subscribeSuccess, setSubscribeSuccess] = useState(false);
+  const [subscribeSuccessMessage, setSubscribeSuccessMessage] = useState<string | null>(null);
   const [subscribeError, setSubscribeError] = useState<string | null>(null);
   const { data: insights, isLoading, isError } = useInsights();
   const { data: profile } = useProfile();
@@ -24,11 +26,63 @@ export default function Insights() {
     e.preventDefault();
     setIsSubscribing(true);
     setSubscribeError(null);
+    setSubscribeSuccessMessage(null);
 
     try {
-      await apiClient.post("/email/newsletter", { email: newsletterEmail });
+      const trimmedEmail = newsletterEmail.trim();
+      if (!trimmedEmail) {
+        setSubscribeError("Please enter a valid email address.");
+        return;
+      }
+
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+      const templateId = import.meta.env.VITE_EMAILJS_NEWSLETTER_TEMPLATE_ID;
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+      if (!serviceId || !templateId || !publicKey) {
+        setSubscribeError(
+          "Newsletter signups are temporarily unavailable. Please check back later.",
+        );
+        return;
+      }
+
+      let emailJsFailureMessage: string | null = null;
+
+      try {
+        await emailjs.send(
+          serviceId,
+          templateId,
+          {
+            subscriber_email: trimmedEmail,
+            to_email: trimmedEmail,
+            email: trimmedEmail,
+            user_email: trimmedEmail,
+            reply_to: trimmedEmail,
+            name: trimmedEmail.split("@")[0] ?? "Subscriber",
+            websiteLink: window.location.origin,
+          },
+          {
+            publicKey,
+          },
+        );
+      } catch (err: any) {
+        console.error("EmailJS newsletter confirmation failed", err);
+        emailJsFailureMessage =
+          err?.text ??
+          err?.message ??
+          "We couldn't send the confirmation email automatically.";
+      }
+
+      const response = await apiClient.post("/email/newsletter", { email: trimmedEmail });
 
       setSubscribeSuccess(true);
+      setSubscribeSuccessMessage(
+        emailJsFailureMessage
+          ? `${response.data?.message ?? "Subscription received."} ${emailJsFailureMessage} We'll follow up shortly.`
+          : typeof response.data?.message === "string"
+            ? response.data.message
+            : "Successfully subscribed! Check your email for confirmation.",
+      );
       setNewsletterEmail("");
       
       // Reset success message after 5 seconds
@@ -36,21 +90,18 @@ export default function Insights() {
         setSubscribeSuccess(false);
       }, 5000);
     } catch (err: any) {
-      // Handle axios errors
       if (err.response) {
         const errorData = err.response.data;
-        
-        // Handle validation errors with detailed messages
+
         if (errorData?.details?.fieldErrors) {
           const fieldErrors = errorData.details.fieldErrors;
           const errorMessages: string[] = [];
-          
-          // Collect all field error messages
+
           if (fieldErrors.email?.length) errorMessages.push(...fieldErrors.email);
-          
+
           setSubscribeError(errorMessages.join(". ") || errorData.error || "Failed to subscribe");
         } else {
-          setSubscribeError(errorData?.error || `Failed to subscribe (${err.response.status})`);
+          setSubscribeError(errorData?.error || errorData?.message || `Failed to subscribe (${err.response.status})`);
         }
       } else if (err.request) {
         setSubscribeError("Network error. Please check your connection and try again.");
@@ -227,9 +278,11 @@ export default function Insights() {
               <div className="w-20 h-20 mx-auto mb-4">
                 <LottieAnimation src="https://assets10.lottiefiles.com/packages/lf20_touohxv0.json" loop={false} speed={0.2} />
               </div>
-              <h3 className="text-lg font-semibold text-primary mb-2">Successfully Subscribed!</h3>
+              <h3 className="text-lg font-semibold text-primary mb-2">
+                {subscribeSuccessMessage ?? "Subscription updated"}
+              </h3>
               <p className="text-sm text-foreground/70">
-                Check your email for confirmation.
+                You can close this message or continue exploring insights.
               </p>
             </div>
           ) : (

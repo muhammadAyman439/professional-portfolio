@@ -88,6 +88,12 @@ model Insight {
   @@index([category])
 }
 
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
 model FAQ {
   id       String   @id @default(uuid())
   question String   @db.Text
